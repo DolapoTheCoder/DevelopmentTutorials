@@ -7,19 +7,27 @@
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  
+  const depositAmount = hre.ethers.utils.parseEther("1");
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  //test accounts
+  const accounts = await hre.ethers.getSigners();
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  owner1 = accounts[0];
+  owner2 = accounts[1];
+  owner3 = accounts[2];
 
-  await lock.deployed();
+  ownerList = [owner1.address, owner2.address, owner3.address];
+
+  const minNumOfConfirmations = 3;
+
+  const MultiSig = await hre.ethers.getContractFactory("MultiSig");
+  const multisig = await MultiSig.deploy(ownerList, minNumOfConfirmations);
+
+  await multisig.deployed();
 
   console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+    `Deployed MultiSig with: ${ownerList} as owners, Minimum number of confirmations: ${minNumOfConfirmations}.`
   );
 }
 
