@@ -27,7 +27,7 @@ async function main() {
   await multisig.deployed();
 
   console.log(
-    `Deployed MultiSig with: ${ownerList} as owners, Minimum number of confirmations: ${minNumOfConfirmations}.`
+    `Deployed MultiSig at: ${multisig.address}.`
   );
 }
 
