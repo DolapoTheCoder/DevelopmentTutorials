@@ -124,5 +124,36 @@ contract Dao {
             block.number <= Proposals[_id].deadline,
             "The Deadline has passed for this proposal"
         );
+
+        //now they can vote
+        proposal storage p = Proposals[_id];
+
+        if (_vote) {
+            p.votesUp++;
+        } else {
+            p.votesDown++;
+        }
+
+        p.voteStatus[msg.sender] = true;
+
+        emit newVote(p.votesUp, p.votesDown, msg.sender, _id, _vote);
+    }
+
+    function countVote(uint256 _id) public {
+        require(msg.sender == owner, "Only owner can count votes");
+        require(Proposals[_id].exists, "This Proposal doesn not exist");
+        require(
+            block.number > Proposals[_id].deadline,
+            "Voting Deadline hasn't reached yet."
+        );
+        require(!Proposals[_id].countConducted, "Count already conducted.");
+
+        proposal storage p = Proposals[_id];
+
+        if (Proposals[_id].votesDown < Proposals[_id].votesUp) {
+            p.passed = true;
+        }
+
+        p.countConducted = true;
     }
 }
