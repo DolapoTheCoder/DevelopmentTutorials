@@ -155,5 +155,13 @@ contract Dao {
         }
 
         p.countConducted = true;
+
+        emit propsalCount(_id, p.passed);
+    }
+
+    function addTokenId(uint256 _tokenId) public {
+        require(msg.sender == owner, "Only Owner can add tokens.");
+
+        validTokens.push(_tokenId);
     }
 }
