@@ -11,14 +11,14 @@ contract Tether {
     event Approval(
         address indexed _owner,
         address indexed _spender,
-        uin _value
+        uint256 _value
     );
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
     constructor() public {
-        balanceoF[msg.sender] = totalSupply;
+        balanceOf[msg.sender] = totalSupply;
     }
 
     function transfer(address _to, uint256 _value)
@@ -54,7 +54,7 @@ contract Tether {
             "Value higher than balance of user"
         );
         require(
-            _value <= balanceOf[_from][msg.sender],
+            _value <= allowance[_from][msg.sender],
             "Value higher than balanee"
         );
         balanceOf[_to] += _value;
