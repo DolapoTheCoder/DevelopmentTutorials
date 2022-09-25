@@ -15,6 +15,7 @@ contract DecentralBank {
     mapping(address => bool) public isStaking;
 
     constructor(RWD _rwd, Tether _tether) public {
+        owner = msg.sender;
         rwd = _rwd;
         tether = _tether;
     }
@@ -32,5 +33,31 @@ contract DecentralBank {
         //update staking balance
         isStaking[msg.sender] = true;
         hasStaked[msg.sender] = true;
+    }
+
+    function unstakeTokens() public {
+        uint256 balance = stakingBalance[msg.sender];
+        require(balance > 0, "staking balance cannot be less than 0.");
+
+        //trasnfer tokens to specified contract address
+        tether.transfer(msg.sender, balance);
+
+        stakingBalance[msg.sender] = 0;
+
+        //update status
+        isStaking[msg.sender] = false;
+    }
+
+    //issue rewards
+    function issueTokens() public {
+        require(msg.sender == owner, "Only owner can issue tokens");
+
+        for (uint256 i = 0; i < stakers.length; i++) {
+            address recipient = stakers[i];
+            uint256 balance = stakingBalance[recipient] / 9;
+            if (balance > 0) {
+                rwd.transfer(recipient, balance);
+            }
+        }
     }
 }
