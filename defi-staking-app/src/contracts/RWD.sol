@@ -55,7 +55,7 @@ contract RWD {
         );
         require(
             _value <= allowance[_from][msg.sender],
-            "Value higher than balanee"
+            "RWD: Value higher than balanCe"
         );
         balanceOf[_to] += _value;
         balanceOf[_from] -= _value;

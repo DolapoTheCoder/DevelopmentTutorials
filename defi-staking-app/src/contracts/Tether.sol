@@ -55,7 +55,7 @@ contract Tether {
         );
         require(
             _value <= allowance[_from][msg.sender],
-            "Value higher than balanee"
+            "TETHER: Value higher than balance"
         );
         balanceOf[_to] += _value;
         balanceOf[_from] -= _value;
