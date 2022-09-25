@@ -5263,12 +5263,13 @@
         }
       },
       "links": {},
-      "address": "0xA24FE78545a078C2dc10f7B7797b05E3fcD7844D",
-      "transactionHash": "0x248259d3c57cee75ed17fca50dea2806c77aaca8e7b9f974d4d677988d7bdf89"
+      "address": "0xDb122EE80992907D812a88F3bb9eF33c5146ab4C",
+      "transactionHash": "0x77450b6da4d9a457f5009033e87435197bab8a00ec96cbaf08cc666010cd2c12"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-09-25T14:58:03.803Z",
+  "updatedAt": "2022-09-25T21:10:57.747Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
