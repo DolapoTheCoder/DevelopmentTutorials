@@ -15,7 +15,7 @@ class Navbar extends Component {
                 <ul className="navbar-nav">
                     <li>
                         <small style={{color: 'white'}}>
-                            ACCOUNT NUMBER: {this.props.account}
+                            ACCOUNT NUMBER: {this.props.account} 
                         </small>
                     </li>
                 </ul>

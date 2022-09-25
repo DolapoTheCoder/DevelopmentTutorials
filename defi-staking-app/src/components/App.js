@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import Navbar from './Navbar';
-import Web3 from 'web3';
+import Web3 from 'web3'; 
 
 class App extends Component {
 
@@ -27,14 +27,21 @@ class App extends Component {
     async loadBlockchainData() {
         const web3 = window.web3
         const account = await web3.eth.getAccounts()
-        console.log(account)
+        this.setState({account: account[0]})
     }
 
     //props sends property from one component to another
     constructor(props) {
         super(props)
         this.state = {
-            account: '0x0'
+            account: '0x0',
+            tether: {},
+            rwd: {},
+            decentralBank: {},
+            tetherBalance: '0',
+            rwdBalance: '0',
+            stakingBalance: '0',
+            loading: true
         }
 
     }
