@@ -2,7 +2,8 @@
 
 import React, {Component} from 'react';
 import Navbar from './Navbar';
-import Web3 from 'web3'; 
+import Web3 from 'web3';
+import Tether from '../truffle_abis/Tether.json';
 
 class App extends Component {
 
@@ -28,7 +29,10 @@ class App extends Component {
         const web3 = window.web3
         const account = await web3.eth.getAccounts()
         this.setState({account: account[0]})
+        const networkId = await web3.eth.net.getId()
+        console.log(networkId,'Network ID')
     }
+        
 
     //props sends property from one component to another
     constructor(props) {
