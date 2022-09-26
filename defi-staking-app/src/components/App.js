@@ -4,6 +4,8 @@ import React, {Component} from 'react';
 import Navbar from './Navbar';
 import Web3 from 'web3';
 import Tether from '../truffle_abis/Tether.json';
+import RWD from '../truffle_abis/RWD.json';
+import DecentralBank from '../truffle_abis/DecentralBank.json';
 import { CLIENT_RENEG_WINDOW } from 'tls';
 
 class App extends Component {
@@ -48,6 +50,35 @@ class App extends Component {
             //if no tetherdata
             window.alert('Error! Tether contract not deployed.')
         }
+
+        const rwdData = RWD.networks[networkId]
+        //checking for tether data
+        if(rwdData) {
+            //tether contract abi(JSON) and address
+            const rwd = new web3.eth.Contract(RWD.abi, rwdData.address)
+            this.setState({rwd}) //set state to tether contract so we can use props
+            let rwdBalance = await rwd.methods.balanceOf(this.state.account).call() //getting the balance of the account
+            this.setState({rwdBalance: rwdBalance.toString()})
+            console.log({balance: rwdBalance})
+        } else {
+            //if no tetherdata
+            window.alert('Error! RewardToken contract not deployed.')
+        }
+
+        const decentralBankData = DecentralBank.networks[networkId]
+        //checking for tether data
+        if(decentralBankData) {
+            //tether contract abi(JSON) and address
+            const decentralBank = new web3.eth.Contract(DecentralBank.abi, decentralBankData.address)
+            this.setState({decentralBank}) //set state to tether contract so we can use props
+            let stakingBalance = await decentralBank.methods.stakingBalance(this.state.account).call() //getting the balance of the account
+            this.setState({stakingBalance: stakingBalance.toString()})
+            console.log({balance: stakingBalance})
+        } else {
+            //if no tetherdata
+            window.alert('Error! RewardToken contract not deployed.')
+        }
+
     }
         
 
