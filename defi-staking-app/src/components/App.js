@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import Navbar from './Navbar';
 import Web3 from 'web3';
 import Tether from '../truffle_abis/Tether.json';
+import { CLIENT_RENEG_WINDOW } from 'tls';
 
 class App extends Component {
 
@@ -30,7 +31,23 @@ class App extends Component {
         const account = await web3.eth.getAccounts()
         this.setState({account: account[0]})
         const networkId = await web3.eth.net.getId()
-        console.log(networkId,'Network ID')
+
+        
+        //load the tether contract
+        const tetherData = Tether.networks[networkId]
+
+        //checking for tether data
+        if(tetherData) {
+            //tether contract abi(JSON) and address
+            const tether = new web3.eth.Contract(Tether.abi, tetherData.address)
+            this.setState({tether}) //set state to tether contract so we can use props
+            let tetherBalance = await tether.methods.balanceOf(this.state.account).call() //getting the balance of the account
+            this.setState({tetherBalance: tetherBalance.toString()})
+            console.log({balance: tetherBalance})
+        } else {
+            //if no tetherdata
+            window.alert('Error! Tether contract not deployed.')
+        }
     }
         
 
