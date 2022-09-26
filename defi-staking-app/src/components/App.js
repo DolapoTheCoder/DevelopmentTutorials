@@ -45,7 +45,6 @@ class App extends Component {
             this.setState({tether}) //set state to tether contract so we can use props
             let tetherBalance = await tether.methods.balanceOf(this.state.account).call() //getting the balance of the account
             this.setState({tetherBalance: tetherBalance.toString()})
-            console.log({balance: tetherBalance})
         } else {
             //if no tetherdata
             window.alert('Error! Tether contract not deployed.')
@@ -59,7 +58,6 @@ class App extends Component {
             this.setState({rwd}) //set state to tether contract so we can use props
             let rwdBalance = await rwd.methods.balanceOf(this.state.account).call() //getting the balance of the account
             this.setState({rwdBalance: rwdBalance.toString()})
-            console.log({balance: rwdBalance})
         } else {
             //if no tetherdata
             window.alert('Error! RewardToken contract not deployed.')
@@ -73,12 +71,11 @@ class App extends Component {
             this.setState({decentralBank}) //set state to tether contract so we can use props
             let stakingBalance = await decentralBank.methods.stakingBalance(this.state.account).call() //getting the balance of the account
             this.setState({stakingBalance: stakingBalance.toString()})
-            console.log({balance: stakingBalance})
         } else {
             //if no tetherdata
             window.alert('Error! RewardToken contract not deployed.')
         }
-
+        this.setState({loading: false})
     }
         
 
@@ -104,7 +101,9 @@ class App extends Component {
             <div>
                 <Navbar account={this.state.account}/>
                     <div className='text-center'>
-                        <h1></h1>
+                        <h1>
+                            {console.log(this.state.loading)}
+                        </h1>
                     </div>
             </div>
         )
