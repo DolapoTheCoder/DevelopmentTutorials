@@ -22,24 +22,32 @@ class Main extends Component {
                         </tr>
                     </tbody>
                 </Table>
-                <div>
-                    <form>
-                        <div>
+                <div className='card mb-2' style={{opacity: '.9'}}>
+                    <form className='mb-3'>
+                        <div style={{borderSpacing: '0 1em'}}>
                             <label className='float-left' style={{marginLeft: '15px'}} for='stakeTokenBalance'>
-                                Stake tokens Balance:
+                                <b>Stake tokens: </b>
                             </label>
-                            <input type="text" placeholder='0' required id='stakeTokenBalance'/>
-                            <div className='inpute-grouped-open'>
-                                <div className='input-group-text'>
-                                    <img src={tether}alt='tether' height='64'/>  
-                                    &nbsp;&nbsp;&nbsp; USDT
+                            <span className='float-right' style={{marginRight: '8px'}}>
+                                Balance:
+                            </span>
+                            <div className='input-group mb-4'>
+                                <input 
+                                    type="text" 
+                                    placeholder='0' 
+                                    required />
+                                <div className='inpute-group-open'>
+                                    <div className='input-group-text'>
+                                        <img src={tether}alt='tether' height='64'/>  
+                                        &nbsp;&nbsp;&nbsp; USDT
+                                    </div>
                                 </div>
                             </div>
                             <button type='submit' className='btn btn-primary btn-lg btn-black'>Deposit</button>
                         </div>
                     </form>
                     <button className='btn btn-primary btn-lg btn-black'>Withdraw</button>
-                    <div className='card-body text-center' style={{color: 'black'}}>
+                    <div className='card-body text-center' style={{color: 'blue'}}>
                         AIRDROP (add timer)
                     </div>
                 </div>

@@ -102,8 +102,8 @@ class App extends Component {
             <div>
                 <Navbar account={this.state.account}/>
                     <div className='container-fluid mt-5'>
-                        <div className='row'>
-                            <main role='main' className='col-lg-12 ml-auto mr-auto' style={{maxWidth:'60px', minHeight: '100vm'}}>
+                        <div className='row content'>
+                            <main role='main' className='col-lg-12 ml-auto mr-auto' style={{maxWidth:'700px', minHeight: '100vm'}}>
                                 <div>
                                     <Main/>    
                                 </div>  
