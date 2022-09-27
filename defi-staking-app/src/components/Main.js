@@ -6,6 +6,7 @@ import tether from'../tether.png'
 
 class Main extends Component {
     render() {
+        console.log(this.props.stakingBalance)
         return (
             <div id='content' className='mt-3'>
                 <Table>
@@ -17,15 +18,15 @@ class Main extends Component {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>USDT</td>
-                            <td>RWD</td>
+                            <td>{this.props.stakingBalance} USDT</td>
+                            <td>{this.props.rwdBalance} RWD</td>
                         </tr>
                     </tbody>
                 </Table>
                 <div className='card mb-2' style={{opacity: '.9'}}>
                     <form className='mb-3'>
                         <div style={{borderSpacing: '0 1em'}}>
-                            <label className='float-left' style={{marginLeft: '15px'}} for='stakeTokenBalance'>
+                            <label className='float-left' style={{marginLeft: '15px'}}>
                                 <b>Stake tokens: </b>
                             </label>
                             <span className='float-right' style={{marginRight: '8px'}}>
