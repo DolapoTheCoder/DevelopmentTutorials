@@ -7,7 +7,6 @@ import Web3 from 'web3';
 import Tether from '../truffle_abis/Tether.json';
 import RWD from '../truffle_abis/RWD.json';
 import DecentralBank from '../truffle_abis/DecentralBank.json';
-import { CLIENT_RENEG_WINDOW } from 'tls';
 
 class App extends Component {
 
