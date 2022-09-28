@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card'
-import tether from'../tether.png'
+import tether from'../tether.png';
+import Airdrop from './Airdrop';
 
 class Main extends Component {
     render() {
@@ -48,7 +49,7 @@ class Main extends Component {
                     </form>
                     <button className='btn btn-primary btn-lg btn-black'>Withdraw</button>
                     <div className='card-body text-center' style={{color: 'blue'}}>
-                        AIRDROP (add timer)
+                        AIRDROP <Airdrop/>
                     </div>
                 </div>
             </div>
