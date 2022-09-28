@@ -49,7 +49,7 @@ class Main extends Component {
                     </form>
                     <button className='btn btn-primary btn-lg btn-black'>Withdraw</button>
                     <div className='card-body text-center' style={{color: 'blue'}}>
-                        AIRDROP <Airdrop/>
+                        AIRDROP <Airdrop stakingBalance = {this.props.stakingBalance}/>
                     </div>
                 </div>
             </div>
