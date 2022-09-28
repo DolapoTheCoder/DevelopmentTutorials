@@ -6,7 +6,6 @@ import tether from'../tether.png'
 
 class Main extends Component {
     render() {
-        console.log(this.props.stakingBalance)
         return (
             <div id='content' className='mt-3'>
                 <Table>
@@ -18,8 +17,8 @@ class Main extends Component {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{this.props.stakingBalance} USDT</td>
-                            <td>{this.props.rwdBalance} RWD</td>
+                            <td>{window.web3.utils.fromWei(this.props.stakingBalance, 'Ether')} USDT</td>
+                            <td>{window.web3.utils.fromWei(this.props.rwdBalance, 'Ether')} RWD</td>
                         </tr>
                     </tbody>
                 </Table>
@@ -30,7 +29,7 @@ class Main extends Component {
                                 <b>Stake tokens: </b>
                             </label>
                             <span className='float-right' style={{marginRight: '8px'}}>
-                                Balance:
+                                Balance: {window.web3.utils.fromWei(this.props.tetherBalance, 'Ether')} 
                             </span>
                             <div className='input-group mb-4'>
                                 <input 
