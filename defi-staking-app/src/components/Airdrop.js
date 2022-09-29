@@ -67,7 +67,6 @@ class Airdrop extends Component {
         this.airdropReleaseTokens()
         return(
             <div style={{color: 'black'}}> {this.state.time.m}:{this.state.time.s}
-                {this.startTimer()}
             </div>
         )
     }

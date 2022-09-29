@@ -24,10 +24,18 @@ class Main extends Component {
                     </tbody>
                 </Table>
                 <div className='card mb-2' style={{opacity: '.9'}}>
-                    <form className='mb-3'>
+                    <form className='mb-3'
+                        onSubmit={(event) => {
+                            event.preventDefault() //prevent refresh
+                            let amount
+                            amount = this.input.value.toString()
+                            amount = window.web3.utils.toWei(amount, 'Ether')
+                            this.props.stakeTokens(amount)
+                        }}
+                    >
                         <div style={{borderSpacing: '0 1em'}}>
                             <label className='float-left' style={{marginLeft: '15px'}}>
-                                <b>Stake tokens: </b>
+                                <b>Stake tokens: </b> {window.web3.utils.fromWei(this.props.stakingBalance, 'Ether')} 
                             </label>
                             <span className='float-right' style={{marginRight: '8px'}}>
                                 Balance: {window.web3.utils.fromWei(this.props.tetherBalance, 'Ether')} 
@@ -36,7 +44,8 @@ class Main extends Component {
                                 <input 
                                     type="text" 
                                     placeholder='0' 
-                                    required />
+                                    required 
+                                    ref={(input) => {this.input = input}}/>
                                 <div className='inpute-group-open'>
                                     <div className='input-group-text'>
                                         <img src={tether}alt='tether' height='64'/>  
@@ -47,7 +56,7 @@ class Main extends Component {
                             <button type='submit' className='btn btn-primary btn-lg btn-black'>Deposit</button>
                         </div>
                     </form>
-                    <button className='btn btn-primary btn-lg btn-black'>Withdraw</button>
+                    <button className='btn btn-primary btn-lg btn-black' onClick={this.props.unstakeTokens}>Withdraw</button>
                     <div className='card-body text-center' style={{color: 'blue'}}>
                         AIRDROP <Airdrop stakingBalance = {this.props.stakingBalance}/>
                     </div>

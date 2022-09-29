@@ -113,7 +113,6 @@ class App extends Component {
             stakingBalance: '0',
             loading: true
         }
-
     }
 
     //our react code goes here
@@ -127,6 +126,7 @@ class App extends Component {
                     rwdBalance = {this.state.rwdBalance}
                     stakingBalance = {this.state.stakingBalance}
                     stakeTokens = {this.stakeTokens}
+                    unstakeTokens = {this.unstakeTokens}
                 />}
         return (
             <div>
