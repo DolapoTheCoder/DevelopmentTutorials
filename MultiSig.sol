@@ -46,7 +46,7 @@ contract MultiSig {
 
     //events
 
-    event depositAmount(address indexed from, uint256 amount);
+    /* event depositAmount(address indexed from, uint256 amount);
     event submitTransaction(
         address indexed owner,
         address indexed to,
@@ -61,19 +61,23 @@ contract MultiSig {
     );
     event revokeTransaction(Transaction transaction, uint256 indexed txIndex);
     event executeTransaction(Transaction transaction, uint256 indexed txIndex);
-    event submitTransaction(Transaction transaction, uint256 indexed txIndex);
+    event submitTransaction(Transaction transaction, uint256 indexed txIndex); */
 
-    constructor(address[] memory _owners, uint256 _minNumOfConfirmations) {
-        require(_owners.length > 1, "Must be more than one owner.");
+    constructor(uint256 _minNumOfConfirmations) {
+//        require(_owners.length > 1, "Must be more than one owner.");
         require(
-            _minNumOfConfirmations <= owners.length &&
                 _minNumOfConfirmations > 0,
-            "Minimum number of confirmations needs to be lower than amount of owners."
+            "Minimum number of confirmations needs to be more than 0."
         );
 
         transCount = 0;
         executedCount = 0;
 
+        isOwner[msg.sender] = true;
+        owners.push(msg.sender);
+    }
+
+    function newOwner(address[] memory _owners) public onlyOwner {
         for (uint256 i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
 
@@ -88,7 +92,7 @@ contract MultiSig {
     //deposit payable
     function deposit() public payable onlyOwner {
         walletBalance += msg.value;
-        emit depositAmount(msg.sender, msg.value);
+       // emit depositAmount(msg.sender, msg.value);
     }
 
     //submitTransactions
@@ -111,7 +115,7 @@ contract MultiSig {
         _transaction.isConfirmed = false;
         _transaction.numOfConfirmations = 0;
 
-        emit submitTransaction(msg.sender, _to, _value, _data, txIndex);
+       // emit submitTransaction(msg.sender, _to, _value, _data, txIndex);
     }
 
     //confirmTransactions
@@ -121,10 +125,11 @@ contract MultiSig {
         if (transMap[txIndex].numOfConfirmations >= minNumOfConfirmations) {
             transMap[txIndex].isConfirmed = true;
             isConfirmed[txIndex][msg.sender] = true;
-            emit confirmTransaction(transMap[txIndex], txIndex, true);
-        } else {
-            emit confirmTransaction(transMap[txIndex], txIndex, false);
-        }
+            //emit confirmTransaction(transMap[txIndex], txIndex, true);
+        } 
+        // else {
+        //     emit confirmTransaction(transMap[txIndex], txIndex, false);
+        // }
     }
 
     //count & mapping instead of array. (TICK)
@@ -156,7 +161,7 @@ contract MultiSig {
         //remove from trans mapping
         delete transMap[txIndex];
 
-        emit executeTransaction(executedTrans[executedCount], executedCount);
+       // emit executeTransaction(executedTrans[executedCount], executedCount);
     }
 
     //revokeTransactions
@@ -167,7 +172,7 @@ contract MultiSig {
         isConfirmed[txIndex][msg.sender] = false;
         transMap[txIndex].numOfConfirmations -= 1;
 
-        emit revokeTransaction(transMap[txIndex], txIndex);
+       // emit revokeTransaction(transMap[txIndex], txIndex);
     }
 
     //getTransactions
