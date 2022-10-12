@@ -66,8 +66,8 @@ contract MultiSig {
     constructor(uint256 _minNumOfConfirmations) {
         //        require(_owners.length > 1, "Must be more than one owner.");
         require(
-            _minNumOfConfirmations > 0,
-            "Minimum number of confirmations needs to be more than 0."
+            _minNumOfConfirmations > 1,
+            "Minimum number of confirmations needs to be more than 1."
         );
 
         transCount = 0;
