@@ -16,5 +16,19 @@ contract ('multiSig', accounts => {
      * TEST 5: TEST SUBMIT (O2), GET (O1)
      */
 
+    let multiSig
+
+    before(async () => {
+        //loadingt the contract and 2 minimumConfi
+        multiSig = await MultiSig.new(2)
+        await multiSig.newOwner([accounts[1]], {from: accounts[0]})
+    });
+
+    describe('Multi-Sig Deployment', async () => {
+        it('Owner matches first account', async () => {
+            const owner = await multiSig.isOwner(accounts[0])
+            assert.equal(owner, true)
+        })
+    })
 
 })
