@@ -33,12 +33,13 @@ contract ('multiSig', accounts => {
         })
     })
 
-    //TEST 2 ERROR WITH THE DEPOSIT
+    //TEST 2 
     describe('Test Deposit', async () => {
         it('Test deposit', async () => {
-            const balance = await multiSig.walletBalance()
+            let balance
             await multiSig.deposit({from: accounts[1], value: web3.utils.toWei("2", "ether")})
-            assert.equal(balance, web3.utils.toBN("2"))
+            balance = await multiSig.walletBalance()
+            assert.equal(balance, web3.utils.toWei("2"))
         })
     })
 
