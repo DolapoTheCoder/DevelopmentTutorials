@@ -13,9 +13,10 @@ contract MultiSig {
     struct Transaction {
         address to;
         uint256 value;
-        bytes data;
+        string data;
         bool isConfirmed;
         uint256 numOfConfirmations;
+        bool hasBeenExecuted;
     }
 
     mapping(address => bool) public isOwner;
@@ -28,7 +29,9 @@ contract MultiSig {
 
     uint256 public executedCount;
 
-    mapping(uint256 => Transaction) executedTrans;
+    //mapping(uint256 => Transaction) executedTrans;
+
+    Transaction[] public executedTransactions;
 
     address[] public owners;
 
@@ -44,30 +47,11 @@ contract MultiSig {
         _;
     }
 
-    //events
-
-    /* event depositAmount(address indexed from, uint256 amount);
-    event submitTransaction(
-        address indexed owner,
-        address indexed to,
-        uint256 value,
-        bytes data,
-        uint256 indexed txIndex
-    );
-    event confirmTransaction(
-        Transaction transaction,
-        uint256 indexed txIndex,
-        bool confirmed
-    );
-    event revokeTransaction(Transaction transaction, uint256 indexed txIndex);
-    event executeTransaction(Transaction transaction, uint256 indexed txIndex);
-    event submitTransaction(Transaction transaction, uint256 indexed txIndex); */
-
     constructor(uint256 _minNumOfConfirmations) {
         //        require(_owners.length > 1, "Must be more than one owner.");
         require(
-            _minNumOfConfirmations > 1,
-            "Minimum number of confirmations needs to be more than 1."
+            _minNumOfConfirmations > 0,
+            "Minimum number of confirmations needs to be more than 0."
         );
 
         transCount = 0;
@@ -91,6 +75,7 @@ contract MultiSig {
 
     //deposit payable
     function deposit() public payable onlyOwner {
+        require(msg.value > 0, "Must send a value greater than 0.");
         walletBalance += msg.value;
         // emit depositAmount(msg.sender, msg.value);
     }
@@ -99,37 +84,36 @@ contract MultiSig {
     function submit(
         address _to,
         uint256 _value,
-        bytes memory _data
+        string memory _data
     ) public payable onlyOwner {
-        require(_value <= 0, "must be greate than 0");
+        require(_value > 0, "must be greate than 0");
 
         //uint256 txIndex = transactions.length;
-        uint256 txIndex = transCount;
+        //uint256 txIndex = transCount;
 
-        //transactions.push(Transaction(_to, _value, _data, false, 0));
-        Transaction memory _transaction = transMap[txIndex];
+        transactions.push(Transaction(_to, _value, _data, false, 0, false));
+        //Transaction memory _transaction = transMap[txIndex];
 
-        _transaction.to = _to;
-        _transaction.value = _value;
-        _transaction.data = _data;
-        _transaction.isConfirmed = false;
-        _transaction.numOfConfirmations = 0;
+        //_transaction.to = _to;
+        //_transaction.value = _value;
+        //_transaction.data = _data;
+        //_transaction.isConfirmed = false;
+        //_transaction.numOfConfirmations = 0;
 
-        // emit submitTransaction(msg.sender, _to, _value, _data, txIndex);
+        //transactions.push(_transaction);
+        transCount++;
+
+        //return _transaction.data;
     }
 
     //confirmTransactions
     function confirm(uint256 txIndex) public onlyOwner {
-        transMap[txIndex].numOfConfirmations += 1;
+        transactions[txIndex].numOfConfirmations += 1;
 
-        if (transMap[txIndex].numOfConfirmations >= minNumOfConfirmations) {
-            transMap[txIndex].isConfirmed = true;
+        if (transactions[txIndex].numOfConfirmations >= minNumOfConfirmations) {
+            transactions[txIndex].isConfirmed = true;
             isConfirmed[txIndex][msg.sender] = true;
-            //emit confirmTransaction(transMap[txIndex], txIndex, true);
         }
-        // else {
-        //     emit confirmTransaction(transMap[txIndex], txIndex, false);
-        // }
     }
 
     //count & mapping instead of array. (TICK)
@@ -137,42 +121,55 @@ contract MultiSig {
     //executeTransactions
     function execute(uint256 txIndex) public payable onlyOwner {
         require(
-            transMap[txIndex].numOfConfirmations >= minNumOfConfirmations,
+            transactions[txIndex].numOfConfirmations >= minNumOfConfirmations,
             "Not enough confirmations."
+        );
+        require(
+            transactions[txIndex].hasBeenExecuted == false,
+            "This transaction has been executed already"
         );
 
         //send value to 'to' & move to executed trans
-        address reciever = transMap[txIndex].to;
-        uint256 amount = transMap[txIndex].value;
+        address reciever = transactions[txIndex].to;
+        uint256 amount = transactions[txIndex].value;
 
         //sent
         payable(reciever).transfer(amount);
 
         executedCount += 1;
 
-        Transaction memory _transaction = executedTrans[executedCount];
+        Transaction memory _transaction = executedTransactions[executedCount];
 
         _transaction.to = transMap[txIndex].to;
         _transaction.value = transMap[txIndex].value;
         _transaction.data = transMap[txIndex].data;
-        _transaction.isConfirmed = true;
         _transaction.numOfConfirmations = transMap[txIndex].numOfConfirmations;
 
-        //remove from trans mapping
-        delete transMap[txIndex];
+        executedTransactions.push(
+            Transaction(
+                _transaction.to,
+                _transaction.value,
+                _transaction.data,
+                true,
+                _transaction.numOfConfirmations,
+                true
+            )
+        );
 
-        // emit executeTransaction(executedTrans[executedCount], executedCount);
+        //remove from trans mapping
+        //delete transMap[txIndex];
     }
 
     //revokeTransactions
     function revokeConfirmation(uint256 txIndex) public onlyOwner {
-        require(transMap[txIndex].numOfConfirmations >= 1, "No confirmations");
+        require(
+            transactions[txIndex].numOfConfirmations >= 1,
+            "No confirmations"
+        );
         require(isConfirmed[txIndex][msg.sender], "You didn't confirm!");
 
         isConfirmed[txIndex][msg.sender] = false;
-        transMap[txIndex].numOfConfirmations -= 1;
-
-        // emit revokeTransaction(transMap[txIndex], txIndex);
+        transactions[txIndex].numOfConfirmations -= 1;
     }
 
     //getTransactions
@@ -181,7 +178,7 @@ contract MultiSig {
         view
         returns (Transaction memory transaction)
     {
-        Transaction memory getTran = transMap[txIndex];
+        Transaction memory getTran = transactions[txIndex];
 
         return getTran;
     }
