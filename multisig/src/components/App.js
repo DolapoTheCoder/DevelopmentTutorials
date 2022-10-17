@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import './App.css'
 import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
+
 
 class App extends Component {
 
@@ -29,7 +31,6 @@ class App extends Component {
         this.setState({account: accounts[0]})
         const networkId = await web3.eth.net.getId()
 
-        
         //load the multiSig contract
         const multiSigData = MultiSig.networks[networkId]
 
@@ -44,6 +45,9 @@ class App extends Component {
         }
     }
 
+    
+    
+
     //props sends property from one component to another
     constructor(props) {
         super(props)
@@ -57,10 +61,44 @@ class App extends Component {
 
     render(){
         return (
+            <div className="App">
             <div>
-                <NavBar account={this.state.account}/>
-                <h1>Hello</h1>
+              <NavBar/>
             </div>
+      
+            <div className="appBody">
+              <div className="marketContainer">
+                <div className="subContainer">
+                  <span>
+                    {/* <img className="logoImg" src="eth-logo.webp"/> */}
+                  </span>
+                  <span className="marketHeader">Ethereum Farm 👩🏿‍🌾</span>
+                </div>
+      
+                <div className="row">
+                  <div className="col-md-4">
+                    <div className="marketOption">
+                      <div className="glyphContainer hoverButton">
+
+                      </div>
+                      <div className="optionData">
+                        <span>Add Owner</span>
+                      </div>
+                    </div>
+                  </div>
+      
+                  
+      
+                  
+                </div>
+              </div>
+      
+              
+                
+            </div>
+      
+      
+          </div>
         )
     }
 }
