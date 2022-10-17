@@ -108,6 +108,10 @@ contract MultiSig {
 
     //confirmTransactions
     function confirm(uint256 txIndex) public onlyOwner {
+        require(
+            transactions[txIndex].hasBeenExecuted == false,
+            "You can't confirm an executed transaction"
+        );
         transactions[txIndex].numOfConfirmations += 1;
 
         if (transactions[txIndex].numOfConfirmations >= minNumOfConfirmations) {
@@ -134,24 +138,17 @@ contract MultiSig {
         uint256 amount = transactions[txIndex].value;
 
         //sent
-        payable(reciever).transfer(amount);
+        payable(reciever).transfer(amount * (10**18));
 
         executedCount += 1;
 
-        Transaction memory _transaction = executedTransactions[executedCount];
-
-        _transaction.to = transMap[txIndex].to;
-        _transaction.value = transMap[txIndex].value;
-        _transaction.data = transMap[txIndex].data;
-        _transaction.numOfConfirmations = transMap[txIndex].numOfConfirmations;
-
         executedTransactions.push(
             Transaction(
-                _transaction.to,
-                _transaction.value,
-                _transaction.data,
+                transactions[txIndex].to,
+                transactions[txIndex].value,
+                transactions[txIndex].data,
                 true,
-                _transaction.numOfConfirmations,
+                transactions[txIndex].numOfConfirmations,
                 true
             )
         );
@@ -181,5 +178,24 @@ contract MultiSig {
         Transaction memory getTran = transactions[txIndex];
 
         return getTran;
+    }
+
+    //getTransactions
+    function getConfirmations(uint256 txIndex) public view returns (uint256) {
+        uint256 getTranConfirmation = transactions[txIndex].numOfConfirmations;
+
+        return getTranConfirmation;
+    }
+
+    function getAmount(uint256 txIndex) public view returns (uint256) {
+        uint256 getTranAmount = transactions[txIndex].value;
+
+        return getTranAmount;
+    }
+
+    function getBalanceOf(address _address) public view returns (uint256) {
+        uint256 balanceOf = address(_address).balance;
+
+        return balanceOf;
     }
 }

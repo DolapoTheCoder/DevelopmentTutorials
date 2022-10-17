@@ -1,9 +1,10 @@
-const web3 = require('web3')
-const MultiSig = artifacts.require("MultiSig");
+const web3 = require("web3");
 
 require('chai')
     .use(require('chai-as-promised'))
     .should()
+
+const MultiSig = artifacts.require("MultiSig");
 
 contract ('multiSig', accounts => {
     //code for testing
@@ -11,13 +12,13 @@ contract ('multiSig', accounts => {
     /**
      * BEFORE: DEPLOY A NEW MULTISIG, MIN PARAMETER & ADD A NEW OWNER DONE
      * TEST 1: DEPLOYMENT & 2 OWNERS DONE 
-     * TEST 2: TEST DEPOSIT 
-     * TEST 3: TEST SUBMIT (O1), CONFIRM (O1&O2), EXECUTE (O1orO2)
-     * TEST 4: TEST SUBMIT (O1), CONFIRM (O1&O2), REVOKE (O2)
-     * TEST 5: TEST SUBMIT (O2), GET (O1)
+     * TEST 2: TEST DEPOSIT DONE
+     * TEST 3: TEST SUBMIT (O0), CONFIRM (O0&O1), EXECUTE (O0orO1) DONE
+     * TEST 4: TEST SUBMIT (O0), CONFIRM (O0&O1), REVOKE (O1) DONE
+     * TEST 5: TEST SUBMIT (O1), GET (O0) DONE ALREADY
      */
 
-    let multiSig, balance, testData, transaction
+    let multiSig, balance, testData, transaction, confirmations, beforeBal, afterBal
 
     
 
@@ -57,23 +58,62 @@ contract ('multiSig', accounts => {
 
     //TEST 3
     describe('Testing submit, confirm, execute', async () => {
+        
         it('Test another deposit', async () => {
             await deposit2()
             balance = await multiSig.walletBalance()
             assert.equal(balance, web3.utils.toWei("4"))
         })
+
         it('Test submit', async () => {
-            await multiSig.submit(accounts[3], 1, "Tester", {from: accounts[1]})
+            await multiSig.submit(accounts[2], 1, "Tester", {from: accounts[1]})
 
             transaction = await multiSig.get(0)
             testData = transaction.data
             assert.equal("Tester", testData)
         })
 
-        /* it('Test Confirm', async () => {
-             await multiSig.confirm(0, {from: accounts[0]})
+        it('Test Confirm', async () => {
+            await multiSig.confirm(0, {from: accounts[0]})
             await multiSig.confirm(0, {from: accounts[1]})
-        }) */
+            confirmations = await multiSig.getConfirmations(0)
+            assert.equal(2, confirmations)
+        })
+
+        it('Test Execute', async () => {
+            beforeBal = await multiSig.getBalanceOf(accounts[2])
+            const transactionAmount = await multiSig.getAmount(0, {from: accounts[0]})
+            await multiSig.execute(0, {from: accounts[0]})
+            afterBal = await multiSig.getBalanceOf(accounts[2])
+            const difference = afterBal - beforeBal
+            //const thisBalance = await web3.utils.toWei("")
+            assert.equal(1 * (10**18), difference)
+        })
     })
 
+    //TEST 4
+    describe('Testing submit, confirm, revoke', async () => {
+
+        it('Test submit', async () => {
+            await multiSig.submit(accounts[3], 1, "Tester 2", {from: accounts[0]})
+
+            transaction = await multiSig.get(1)
+            testData = transaction.data
+            assert.equal("Tester 2", testData)
+        })
+
+        it('Test Confirm', async () => {
+            await multiSig.confirm(1, {from: accounts[0]})
+            await multiSig.confirm(1, {from: accounts[1]})
+            confirmations = await multiSig.getConfirmations(1)
+            assert.equal(2, confirmations)
+        })
+        
+
+        it('Test Revoke', async () => {
+            await multiSig.revokeConfirmation(1, {from: accounts[0]})
+            confirmations = await multiSig.getConfirmations(1)
+            assert.equal(1, confirmations)
+        })
+    })
 })
