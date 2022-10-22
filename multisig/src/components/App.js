@@ -3,6 +3,7 @@ import './App.css'
 import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
+import {AiOutlineUserAdd, AiOutlineFileAdd} from 'react-icons/all'
 
 
 class App extends Component {
@@ -58,47 +59,56 @@ class App extends Component {
         }
     }
 
+    //add owner, deposit, 
 
     render(){
         return (
             <div className="App">
-            <div>
-              <NavBar/>
-            </div>
-      
-            <div className="appBody">
-              <div className="marketContainer">
-                <div className="subContainer">
-                  <span>
-                    {/* <img className="logoImg" src="eth-logo.webp"/> */}
-                  </span>
-                  <span className="marketHeader">Ethereum Farm 👩🏿‍🌾</span>
+                <div>
+                    <NavBar account={this.state.account}/>
                 </div>
       
-                <div className="row">
-                  <div className="col-md-4">
-                    <div className="marketOption">
-                      <div className="glyphContainer hoverButton">
+                <div className="appBody">
+                    
+                    <div className="marketContainer">
+                        <div className="subContainer">
+                            <span>
+                                {/* <img className="logoImg" src="eth-logo.webp"/> */}
+                            </span>
+                            <span className="marketHeader">Multi-Signature Wallet</span>
+                        </div>
+        
+                        <div className="row">
+                            <div className="col-md-4">
+                                <div className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <AiOutlineUserAdd/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Add Owner</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                      </div>
-                      <div className="optionData">
-                        <span>Add Owner</span>
-                      </div>
+                            <div className="col-md-4">
+                                <div className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <AiOutlineFileAdd/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Submit</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                  </div>
-      
-                  
-      
-                  
                 </div>
-              </div>
-      
-              
-                
             </div>
-      
-      
-          </div>
         )
     }
 }
