@@ -1,16 +1,21 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import './App.css'
 import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
-import {AiOutlineUserAdd, AiOutlineFileAdd} from 'react-icons/all'
+import Balance from './Balance';
+import ListOfTrans from './ListOfTrans';
+import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
 
 
 class App extends Component {
 
+    //useEffect(() => {});
+
     async UNSAFE_componentWillMount() {
         await this.loadWeb3()
         await this.loadBlockchainData()
+        await this.listTransactions()
     }
 
     async loadWeb3() {
@@ -40,12 +45,29 @@ class App extends Component {
             //multiSig contract abi(JSON) and address
             const multiSig = new web3.eth.Contract(MultiSig.abi, multiSigData.address)
             this.setState({multiSig}) //set state to multiSig contract so we can use props
+            const conBalance = await this.state.multiSig.walletBalance
+            if (conBalance != undefined) {
+                this.setState({contractBalance: conBalance})
+            } 
         } else {
             //if no multiSigdata
             window.alert('Error!  contract not deployed.')
         }
     }
 
+    //getTransactions function
+    async listTransactions() {
+        this.setState({loading: true})
+        let transCount = await this.state.multiSig.transCount
+        if (transCount > 0) {
+            //if there are transactions load them into
+            let temp = []
+            for (let i = 0; i < transCount; i++) {
+                temp.push(await this.state.multiSig.transactions[i])
+            }
+            this.setState({listOfTrans: temp})
+        }
+    }
     
     
 
@@ -55,11 +77,13 @@ class App extends Component {
         this.state = {
             account: '0x0',
             multiSig: {},
-            loading: true
+            loading: true,
+            contractBalance: 0,
+            listOfTrans: []
         }
     }
 
-    //add owner, deposit, 
+    //add owner, deposit, submit, confirm, revoke, execute
 
     render(){
         return (
@@ -69,7 +93,11 @@ class App extends Component {
                 </div>
       
                 <div className="appBody">
-                    
+
+                    <div>
+                        <Balance contractBalance={this.state.contractBalance}/>
+                    </div>
+
                     <div className="marketContainer">
                         <div className="subContainer">
                             <span>
@@ -104,8 +132,68 @@ class App extends Component {
                                     </div>
                                 </div>
                             </div>
+                            <div className="col-md-4">
+                                <div className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <BsPiggyBank/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Deposit</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
+                        <br></br>
+
+                        <div className='row'>
+                            
+                            <div className="col-md-4">
+                                <div className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <BiMailSend/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Execute</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
+                                <div className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <BsHandThumbsUp/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Confirm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
+                                <div className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <BsHandThumbsDown/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Revoke</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <ListOfTrans transactions={this.state.listOfTrans}/>
+                        </div>
                     </div>
                 </div>
             </div>
