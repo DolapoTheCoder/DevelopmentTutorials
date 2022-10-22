@@ -5,6 +5,7 @@ import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
 import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
+import ListOfOwners from './ListOfOwners';
 import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
 
 
@@ -15,7 +16,7 @@ class App extends Component {
     async UNSAFE_componentWillMount() {
         await this.loadWeb3()
         await this.loadBlockchainData()
-        await this.listTransactions()
+        await this.loadTransOwners()
     }
 
     async loadWeb3() {
@@ -46,7 +47,7 @@ class App extends Component {
             const multiSig = new web3.eth.Contract(MultiSig.abi, multiSigData.address)
             this.setState({multiSig}) //set state to multiSig contract so we can use props
             const conBalance = await this.state.multiSig.walletBalance
-            if (conBalance != undefined) {
+            if (conBalance !== undefined) {
                 this.setState({contractBalance: conBalance})
             } 
         } else {
@@ -56,7 +57,7 @@ class App extends Component {
     }
 
     //getTransactions function
-    async listTransactions() {
+    async loadTransOwners() {
         this.setState({loading: true})
         let transCount = await this.state.multiSig.transCount
         if (transCount > 0) {
@@ -66,6 +67,16 @@ class App extends Component {
                 temp.push(await this.state.multiSig.transactions[i])
             }
             this.setState({listOfTrans: temp})
+        }
+
+        let ownersCount = await this.state.multiSig.ownersCount
+        if (ownersCount > 0) {
+            //if there are transactions load them into
+            let temp = []
+            for (let i = 0; i < ownersCount; i++) {
+                temp.push(await this.state.multiSig.owners[i])
+            }
+            this.setState({owners: temp})
         }
     }
     
@@ -79,7 +90,8 @@ class App extends Component {
             multiSig: {},
             loading: true,
             contractBalance: 0,
-            listOfTrans: []
+            listOfTrans: [],
+            owners: []
         }
     }
 
@@ -89,21 +101,21 @@ class App extends Component {
         return (
             <div className="App">
                 <div>
-                    <NavBar account={this.state.account}/>
+                    <NavBar account={this.state.account} contractBalance={this.state.contractBalance}/>
                 </div>
       
                 <div className="appBody">
 
-                    <div>
+                    {/* <div>
                         <Balance contractBalance={this.state.contractBalance}/>
-                    </div>
+                    </div> */}
 
                     <div className="marketContainer">
                         <div className="subContainer">
                             <span>
                                 {/* <img className="logoImg" src="eth-logo.webp"/> */}
                             </span>
-                            <span className="marketHeader">Multi-Signature Wallet</span>
+                            <span className="marketHeader">Multi-Signature Wallet 🏧</span>
                         </div>
         
                         <div className="row">
@@ -190,10 +202,19 @@ class App extends Component {
                             </div>
 
                         </div>
+                        
+                        <div>
+                            <ListOfOwners 
+                                owners={this.state.owners}
+                            />
+                        </div>
 
                         <div>
-                            <ListOfTrans transactions={this.state.listOfTrans}/>
+                            <ListOfTrans 
+                                transactions={this.state.listOfTrans}
+                            />
                         </div>
+
                     </div>
                 </div>
             </div>

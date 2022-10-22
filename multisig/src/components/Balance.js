@@ -6,7 +6,7 @@ class Balance extends Component {
         return (
             <>
                 <div>
-                    BALANCE: {this.props.contractBalance}
+                    Multi-Sig Balance: {this.props.contractBalance}
                 </div>
             </>
         )

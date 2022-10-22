@@ -21,6 +21,8 @@ contract MultiSig {
 
     mapping(address => bool) public isOwner;
 
+    uint256 public ownersCount;
+
     Transaction[] public transactions;
 
     uint256 public transCount;
@@ -56,6 +58,7 @@ contract MultiSig {
 
         transCount = 0;
         executedCount = 0;
+        ownersCount = 1;
 
         isOwner[msg.sender] = true;
         owners.push(msg.sender);
@@ -70,6 +73,7 @@ contract MultiSig {
 
             isOwner[owner] = true;
             owners.push(owner);
+            ownersCount++;
         }
     }
 

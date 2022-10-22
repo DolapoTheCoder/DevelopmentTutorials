@@ -14,6 +14,14 @@ class NavBar extends Component {
                 <ul className="navbar-nav">
                     <li>
                         <small style={{color: 'white'}}>
+                            Wallet Balance: {this.props.contractBalance} 
+                        </small>
+                    </li>
+                </ul>
+
+                <ul className="navbar-nav">
+                    <li>
+                        <small style={{color: 'white'}}>
                             ACCOUNT NUMBER: {this.props.account} 
                         </small>
                     </li>
