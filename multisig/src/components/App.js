@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import './App.css'
 import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
@@ -54,25 +54,32 @@ class App extends Component {
                 this.setState({contractBalance: conBalance})
             } 
 
-            let owners = ['0x0000000000000000000000000000000000000']
+            //RENDER OWNERS
+
+            let owners = []
             
             let count = await multiSig.methods.ownersCount().call()
-
-            //console.log(await multiSig.methods.owners(0).call())
-
-            //works
-            //temp.push(await multiSig.methods.owners(0).call())
-
-            //console.log(await multiSig.owners[0])
             
-            for(let i = 0; i <= count-1; i++) {
+            for(let i = 0; i <= count; i++) {
                 let tempOwn = await multiSig.methods.owners(i).call()
-                console.log(tempOwn)
+                //console.log(tempOwn)
                 owners.push(tempOwn)
             }
 
             //console.log(owners)
             this.setState({owners})
+
+            //RENDER TRANSACTIONS
+            let listOfTrans = []
+            
+            let countTrans = await multiSig.methods.transCount().call()
+            
+            for(let i = 0; i <= countTrans; i++) {
+                let tempOwnTrans = await multiSig.methods.transactions(i).call()
+                listOfTrans.push(tempOwnTrans)
+            }
+
+            this.setState({listOfTrans})
                     
             
         } else {
@@ -81,34 +88,6 @@ class App extends Component {
         }
 
     }
-
-    /* //getTransactions function
-    async loadTransOwners() {
-        //this.setState({loading: true})
-        // let transCount = await this.state.multiSig.transCount
-        // if (transCount > 0) {
-        //     //if there are transactions load them into
-        //     let temp = []
-        //     for (let i = 0; i < transCount; i++) {
-        //         temp.push(await this.state.multiSig.transactions[i])
-        //     }
-        //     this.setState({listOfTrans: temp})
-        // }
-
-        let ownersCount = await this.state.multiSig.ownersCount
-        if (ownersCount >= 0) {
-            //if there are transactions load them into
-            let temp = []
-            temp.push(this.state.account)
-            console.log(temp)
-            // for (let i = 0; i < ownersCount; i++) {
-            //     temp.push(await this.state.multiSig.owners[i])
-            // }
-            this.setState({owners: temp})
-            //console.log(ownersCount)
-        }
-    } */
-    
     
 
     //props sends property from one component to another
@@ -135,9 +114,6 @@ class App extends Component {
       
                 <div className="appBody">
 
-                    {/* <div>
-                        <Balance contractBalance={this.state.contractBalance}/>
-                    </div> */}
 
                     <div className="marketContainer">
                         <div className="subContainer">

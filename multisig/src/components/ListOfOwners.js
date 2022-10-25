@@ -20,7 +20,7 @@ class ListOfOwners extends Component {
 
                         {this.props.owners.length > 0 && this.props.owners.map((o, idx) => {
                             return(
-                                <div className="row">
+                                <div className="row" key={o}>
                                     <div className='col-md-2'>
                                         {idx}
                                     </div>
