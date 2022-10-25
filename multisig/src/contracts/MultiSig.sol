@@ -58,7 +58,7 @@ contract MultiSig {
 
         transCount = 0;
         executedCount = 0;
-        ownersCount = 1;
+        ownersCount = 0;
 
         isOwner[msg.sender] = true;
         owners.push(msg.sender);

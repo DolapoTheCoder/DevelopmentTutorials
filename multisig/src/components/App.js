@@ -1,9 +1,9 @@
-import React, {Component, useEffect} from 'react';
+import React, {Component} from 'react';
 import './App.css'
 import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
-import Balance from './Balance';
+//import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
 import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
@@ -16,7 +16,7 @@ class App extends Component {
     async UNSAFE_componentWillMount() {
         await this.loadWeb3()
         await this.loadBlockchainData()
-        await this.loadTransOwners()
+        //await this.loadTransOwners()
     }
 
     async loadWeb3() {
@@ -46,39 +46,68 @@ class App extends Component {
             //multiSig contract abi(JSON) and address
             const multiSig = new web3.eth.Contract(MultiSig.abi, multiSigData.address)
             this.setState({multiSig}) //set state to multiSig contract so we can use props
-            const conBalance = await this.state.multiSig.walletBalance
+            
+            //multiSig.methods()...?
+            const conBalance = await multiSig.walletBalance
+            
             if (conBalance !== undefined) {
                 this.setState({contractBalance: conBalance})
             } 
+
+            let owners = ['0x0000000000000000000000000000000000000']
+            
+            let count = await multiSig.methods.ownersCount().call()
+
+            //console.log(await multiSig.methods.owners(0).call())
+
+            //works
+            //temp.push(await multiSig.methods.owners(0).call())
+
+            //console.log(await multiSig.owners[0])
+            
+            for(let i = 0; i <= count-1; i++) {
+                let tempOwn = await multiSig.methods.owners(i).call()
+                console.log(tempOwn)
+                owners.push(tempOwn)
+            }
+
+            //console.log(owners)
+            this.setState({owners})
+                    
+            
         } else {
             //if no multiSigdata
             window.alert('Error!  contract not deployed.')
         }
+
     }
 
-    //getTransactions function
+    /* //getTransactions function
     async loadTransOwners() {
-        this.setState({loading: true})
-        let transCount = await this.state.multiSig.transCount
-        if (transCount > 0) {
-            //if there are transactions load them into
-            let temp = []
-            for (let i = 0; i < transCount; i++) {
-                temp.push(await this.state.multiSig.transactions[i])
-            }
-            this.setState({listOfTrans: temp})
-        }
+        //this.setState({loading: true})
+        // let transCount = await this.state.multiSig.transCount
+        // if (transCount > 0) {
+        //     //if there are transactions load them into
+        //     let temp = []
+        //     for (let i = 0; i < transCount; i++) {
+        //         temp.push(await this.state.multiSig.transactions[i])
+        //     }
+        //     this.setState({listOfTrans: temp})
+        // }
 
         let ownersCount = await this.state.multiSig.ownersCount
-        if (ownersCount > 0) {
+        if (ownersCount >= 0) {
             //if there are transactions load them into
             let temp = []
-            for (let i = 0; i < ownersCount; i++) {
-                temp.push(await this.state.multiSig.owners[i])
-            }
+            temp.push(this.state.account)
+            console.log(temp)
+            // for (let i = 0; i < ownersCount; i++) {
+            //     temp.push(await this.state.multiSig.owners[i])
+            // }
             this.setState({owners: temp})
+            //console.log(ownersCount)
         }
-    }
+    } */
     
     
 
@@ -202,6 +231,9 @@ class App extends Component {
                             </div>
 
                         </div>
+
+                        <br></br>
+
                         
                         <div>
                             <ListOfOwners 
