@@ -1,8 +1,9 @@
-import React, {Component, useState} from 'react';
+import React, {Component} from 'react';
 import './App.css'
 import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
+import AddOwnerModal from './Modals/AddOwnerModal';
 //import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
@@ -69,17 +70,17 @@ class App extends Component {
             //console.log(owners)
             this.setState({owners})
 
-            //RENDER TRANSACTIONS
-            let listOfTrans = []
+            // //RENDER TRANSACTIONS
+            // let listOfTrans = []
             
-            let countTrans = await multiSig.methods.transCount().call()
+            // let countTrans = await multiSig.methods.transCount().call()
             
-            for(let i = 0; i <= countTrans; i++) {
-                let tempOwnTrans = await multiSig.methods.transactions(i).call()
-                listOfTrans.push(tempOwnTrans)
-            }
+            // for(let i = 0; i <= countTrans; i++) {
+            //     let tempOwnTrans = await multiSig.methods.transactions(i).call()
+            //     listOfTrans.push(tempOwnTrans)
+            // }
 
-            this.setState({listOfTrans})
+            // this.setState({listOfTrans})
                     
             
         } else {
@@ -87,6 +88,22 @@ class App extends Component {
             window.alert('Error!  contract not deployed.')
         }
 
+    }
+
+    openAddOwner = async () => {
+        this.setState({showAddOwner: true})
+    }
+
+    //add owner then to the new state
+    changeAddOwner = async (newOwnerAdd) =>  {
+        this.setState({newOwner: newOwnerAdd})
+        //console.log(this.state.newOwner)
+    }
+
+    //add owner to contract
+    addOwner = async () => {
+        this.setState({showAddOwner: false})
+        console.log(this.state.newOwner)
     }
     
 
@@ -99,7 +116,9 @@ class App extends Component {
             loading: true,
             contractBalance: 0,
             listOfTrans: [],
-            owners: []
+            owners: [],
+            showAddOwner: false,
+            newOwner: ''
         }
     }
 
@@ -125,7 +144,7 @@ class App extends Component {
         
                         <div className="row">
                             <div className="col-md-4">
-                                <div className="marketOption">
+                                <div onClick={this.openAddOwner} className="marketOption">
                                     <div className="glyphContainer hoverButton">
                                         <span className="glyph">
                                             <AiOutlineUserAdd/>
@@ -225,6 +244,15 @@ class App extends Component {
 
                     </div>
                 </div>
+
+                {this.state.showAddOwner && (
+                    <AddOwnerModal
+                        onClose={() => this.setState({setShowStakeModal:false})}
+                        addOwner={this.addOwner}
+                        changeAddOwner={this.changeAddOwner}
+                    />
+                )}
+
             </div>
         )
     }
