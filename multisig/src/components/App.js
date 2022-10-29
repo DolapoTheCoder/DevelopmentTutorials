@@ -9,7 +9,6 @@ import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
 import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
 
-
 class App extends Component {
 
     //useEffect(() => {});
@@ -81,7 +80,13 @@ class App extends Component {
             // }
 
             // this.setState({listOfTrans})
-                    
+
+            // if (this.state.newOwner !== '') {
+            //     let ownerAddress = []
+            //     ownerAddress.push(this.state.newOwner)
+            //     await multiSig.methods.newOwner(ownerAddress).call()
+            //     window.location.reload(false)
+            // }
             
         } else {
             //if no multiSigdata
@@ -103,7 +108,12 @@ class App extends Component {
     //add owner to contract
     addOwner = async () => {
         this.setState({showAddOwner: false})
-        console.log(this.state.newOwner)
+        //console.log(this.state.newOwner)
+        let ownerAddress = []
+        ownerAddress.push(this.state.newOwner)
+        console.log(ownerAddress)
+        await this.state.multiSig.methods.newOwner(ownerAddress).send({from: this.state.account})
+        //window.location.reload(false)
     }
     
 
