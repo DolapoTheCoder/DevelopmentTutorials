@@ -5,6 +5,7 @@ import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
 import AddOwnerModal from './Modals/AddOwnerModal';
 import DepositModal from './Modals/DepositModal';
+import SubmitModal from './Modals/SubmitModal';
 //import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
@@ -105,6 +106,7 @@ class App extends Component {
 
     }
 
+    //ADD OWNER MODAL
     openAddOwner = async () => {
         this.setState({showAddOwner: true})
     }
@@ -126,6 +128,8 @@ class App extends Component {
         //window.location.reload(false)
     }
 
+
+    //DEPOSIT MODAL
     openDepositModal = async () => {
         this.setState({showDepositModal: true})
     }
@@ -135,14 +139,44 @@ class App extends Component {
         this.setState({depositAmount})
     }
 
-    //add deposit to contract DOESN'T SEND TO CONTRACR
+    //add deposit to contract
     depositFun = async () => {
         this.setState({showDepositModal: false})
         // need to send the ether to an address
         await this.state.multiSig.methods.deposit().send({from: this.state.account, to:this.state.contractAddress, value: Web3.utils.toWei(this.state.depositAmount, "ether")})
-        console.log(this.state.contractAddress)
-        console.log()
     }
+
+    //SUBMIT TRANSACTION MODAL
+    openSubmitModal = () => {
+        this.setState({showSubmitModal: true})
+    }
+
+    sendSubmit = (newTranVariable, info) => {
+
+        if (info === "address") {
+            this.setState({newTranTo: newTranVariable})
+        } else if (info === 'value') {
+            this.setState({newTranValue: newTranVariable})
+        } else {
+            this.setState({newTranData: newTranVariable})
+        }
+    }
+
+    submitTran = () => {
+
+        
+        //ONLY WORKS ON SECOND PRESS OF BUTTON
+        const newTran = {
+            to:this.state.newTranTo, 
+            value: this.state.newTranValue, 
+            data: this.state.newTranData
+        }
+
+        this.setState({newTran})
+        console.log('TRANSATION SUBMITTED')
+        console.log(this.state.newTran)
+    }
+
     
 
     //props sends property from one component to another
@@ -159,7 +193,12 @@ class App extends Component {
             showAddOwner: false,
             newOwner: '',
             showDepositModal: false,
-            depositAmount: 0
+            depositAmount: 0,
+            showSubmitModal: false,
+            newTranTo: '',
+            newTranValue: 0,
+            newTranData: '',
+            newTran: {to: '', value:0, data: ''}
         }
     }
 
@@ -211,7 +250,7 @@ class App extends Component {
                             </div>
 
                             <div className="col-md-4">
-                                <div className="marketOption">
+                                <div onClick={this.openSubmitModal} className="marketOption">
                                     <div className="glyphContainer hoverButton">
                                         <span className="glyph">
                                             <AiOutlineFileAdd/>
@@ -289,7 +328,7 @@ class App extends Component {
 
                 {this.state.showAddOwner && (
                     <AddOwnerModal
-                        onClose={() => this.setState({setShowStakeModal:false})}
+                        onClose={() => this.setState({showAddOwner:false})}
                         addOwner={this.addOwner}
                         changeAddOwner={this.changeAddOwner}
                     />
@@ -297,9 +336,17 @@ class App extends Component {
 
                 {this.state.showDepositModal && (
                     <DepositModal
-                        onClose={() => this.setState({setShowDepositModal:false})}
+                        onClose={() => this.setState({showDepositModal:false})}
                         depositFun={this.depositFun}
                         sendDeposit={this.sendDeposit}
+                    />
+                )}
+
+                {this.state.showSubmitModal && (
+                    <SubmitModal
+                        onClose={() =>  this.setState({showSubmitModal: false})}
+                        sendSubmit={this.sendSubmit}
+                        submitTran={this.submitTran}
                     />
                 )}
 
