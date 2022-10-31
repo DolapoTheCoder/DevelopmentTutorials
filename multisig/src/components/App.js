@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import MultiSig from '../truffle_abis/MultiSig.json'
 import NavBar from './NavBar';
 import AddOwnerModal from './Modals/AddOwnerModal';
+import DepositModal from './Modals/DepositModal';
 //import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
@@ -40,6 +41,7 @@ class App extends Component {
 
         //load the multiSig contract
         const multiSigData = MultiSig.networks[networkId]
+        this.setState({contractAddress: multiSigData.address})
 
         //checking for multiSig data
         if(multiSigData) {
@@ -68,25 +70,30 @@ class App extends Component {
 
             //console.log(owners)
             this.setState({owners})
+          
+            //RENDER TRANSACTIONS
 
-            // //RENDER TRANSACTIONS
-            // let listOfTrans = []
-            
-            // let countTrans = await multiSig.methods.transCount().call()
-            
-            // for(let i = 0; i <= countTrans; i++) {
-            //     let tempOwnTrans = await multiSig.methods.transactions(i).call()
-            //     listOfTrans.push(tempOwnTrans)
-            // }
+            if(await multiSig.transCount >= 0) {
+                let listOfTrans = []
+                
+                let countTrans = await multiSig.methods.transCount().call()
+                
+                for(let i = 0; i <= countTrans; i++) {
+                    let tempOwnTrans = await multiSig.methods.transactions(i).call()
+                    listOfTrans.push(tempOwnTrans)
+                }
 
-            // this.setState({listOfTrans})
+                this.setState({listOfTrans})
 
-            // if (this.state.newOwner !== '') {
-            //     let ownerAddress = []
-            //     ownerAddress.push(this.state.newOwner)
-            //     await multiSig.methods.newOwner(ownerAddress).call()
-            //     window.location.reload(false)
-            // }
+                if (this.state.newOwner !== '') {
+                    let ownerAddress = []
+                    ownerAddress.push(this.state.newOwner)
+                    await multiSig.methods.newOwner(ownerAddress).call()
+                    window.location.reload(false)
+                }
+            }
+
+    
             
         } else {
             //if no multiSigdata
@@ -115,6 +122,24 @@ class App extends Component {
         await this.state.multiSig.methods.newOwner(ownerAddress).send({from: this.state.account})
         //window.location.reload(false)
     }
+
+    openDepositModal = async () => {
+        this.setState({showDepositModal: true})
+    }
+
+    //add deposit then to the new state
+    sendDeposit = async (depositAmount) =>  {
+        this.setState({depositAmount})
+    }
+
+    //add deposit to contract DOESN'T SEND TO CONTRACR
+    depositFun = async () => {
+        this.setState({showDepositModal: false})
+        // need to send the ether to an address
+        await this.state.multiSig.methods.deposit().send({from: this.state.account, to:this.state.contractAddress, value: Web3.utils.toWei(this.state.depositAmount, "ether")})
+        console.log(this.state.contractAddress)
+        console.log(this.state.contractBalance)
+    }
     
 
     //props sends property from one component to another
@@ -122,13 +147,16 @@ class App extends Component {
         super(props)
         this.state = {
             account: '0x0',
+            contractAddress: '',
             multiSig: {},
             loading: true,
             contractBalance: 0,
             listOfTrans: [],
             owners: [],
             showAddOwner: false,
-            newOwner: ''
+            newOwner: '',
+            showDepositModal: false,
+            depositAmount: '0'
         }
     }
 
@@ -167,6 +195,19 @@ class App extends Component {
                             </div>
 
                             <div className="col-md-4">
+                                <div onClick={this.openDepositModal} className="marketOption">
+                                    <div className="glyphContainer hoverButton">
+                                        <span className="glyph">
+                                            <BsPiggyBank/>
+                                        </span>
+                                    </div>
+                                    <div className="optionData">
+                                        <span>Deposit</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
                                 <div className="marketOption">
                                     <div className="glyphContainer hoverButton">
                                         <span className="glyph">
@@ -175,18 +216,6 @@ class App extends Component {
                                     </div>
                                     <div className="optionData">
                                         <span>Submit</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-4">
-                                <div className="marketOption">
-                                    <div className="glyphContainer hoverButton">
-                                        <span className="glyph">
-                                            <BsPiggyBank/>
-                                        </span>
-                                    </div>
-                                    <div className="optionData">
-                                        <span>Deposit</span>
                                     </div>
                                 </div>
                             </div>
@@ -260,6 +289,14 @@ class App extends Component {
                         onClose={() => this.setState({setShowStakeModal:false})}
                         addOwner={this.addOwner}
                         changeAddOwner={this.changeAddOwner}
+                    />
+                )}
+
+                {this.state.showDepositModal && (
+                    <DepositModal
+                        onClose={() => this.setState({setShowDepositModal:false})}
+                        depositFun={this.depositFun}
+                        sendDeposit={this.sendDeposit}
                     />
                 )}
 
