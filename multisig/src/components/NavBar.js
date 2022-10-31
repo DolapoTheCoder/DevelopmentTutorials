@@ -14,7 +14,7 @@ class NavBar extends Component {
                 <ul className="navbar-nav">
                     <li>
                         <small style={{color: 'white'}}>
-                            Wallet balance: {this.props.contractBalance} 
+                            Wallet balance: {this.props.contractBalance} ETH
                         </small>
                     </li>
                 </ul>

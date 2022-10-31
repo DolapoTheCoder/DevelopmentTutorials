@@ -50,11 +50,14 @@ class App extends Component {
             this.setState({multiSig}) //set state to multiSig contract so we can use props
             
             //multiSig.methods()...?
-            const conBalance = await multiSig.walletBalance
+            const conBalance = Web3.utils.fromWei(await multiSig.methods.walletBalance().call(), "ether")
             
-            if (conBalance !== undefined) {
+            //walletBalance coming back as undefined
+            if (conBalance > 0) {
                 this.setState({contractBalance: conBalance})
-            } 
+            } else {
+                this.setState({contractBalance: 0})
+            }
 
             //RENDER OWNERS
 
@@ -138,7 +141,7 @@ class App extends Component {
         // need to send the ether to an address
         await this.state.multiSig.methods.deposit().send({from: this.state.account, to:this.state.contractAddress, value: Web3.utils.toWei(this.state.depositAmount, "ether")})
         console.log(this.state.contractAddress)
-        console.log(this.state.contractBalance)
+        console.log()
     }
     
 
@@ -156,7 +159,7 @@ class App extends Component {
             showAddOwner: false,
             newOwner: '',
             showDepositModal: false,
-            depositAmount: '0'
+            depositAmount: 0
         }
     }
 
