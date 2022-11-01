@@ -122,8 +122,6 @@ class App extends Component {
                     window.location.reload(false)
                 }
             }
-
-    
             
         } else {
             //if no multiSigdata
@@ -167,7 +165,7 @@ class App extends Component {
 
     //add deposit to contract
     depositFun = async () => {
-        this.setState({showDepositModal: false})
+        this.setState({showSubmitModal: false})
         // need to send the ether to an address
         await this.state.multiSig.methods.deposit().send({from: this.state.account, to:this.state.contractAddress, value: Web3.utils.toWei(this.state.depositAmount, "ether")})
     }
@@ -192,7 +190,7 @@ class App extends Component {
             this.setState({
                 newTran: {
                     ...this.state.newTran,
-                    value: newTranVariable
+                    value: Number(newTranVariable)
                 }
             })
         } else {
@@ -205,10 +203,13 @@ class App extends Component {
         }
     }
 
-    submitTran = () => {
-        //ONLY WORKS ON SECOND PRESS OF BUTTON
-        console.log('TRANSATION SUBMITTED')
-        console.log(this.state.newTran)
+    submitTran = async () => {
+        this.setState({openSubmitModal:false})
+
+        //send transaction to contract
+        
+        //Is this sending to SMART CONTRACT
+        await this.state.multiSig.methods.submit(this.state.newTran.to, this.state.newTran.value, this.state.newTran.data).send({from:this.state.account})
     }
 
     

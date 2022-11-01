@@ -19,6 +19,7 @@ class SubmitModal extends Component {
                                     <input
                                         className="inputField"
                                         placeholder="Value"
+                                        type='number'
                                         onChange={e => this.props.sendSubmit(e.target.value, 'value')}
                                     />
                                     <input
