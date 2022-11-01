@@ -14,6 +14,32 @@ import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandT
 class App extends Component {
 
     //useEffect(() => {});
+    //props sends property from one component to another
+    constructor(props) {
+        super(props)
+        this.state = {
+            account: '0x0',
+            contractAddress: '',
+            multiSig: {},
+            loading: true,
+            contractBalance: 0,
+            listOfTrans: [],
+            owners: [],
+            showAddOwner: false,
+            newOwner: '',
+            showDepositModal: false,
+            depositAmount: 0,
+            showSubmitModal: false,
+            newTranTo: '',
+            newTranValue: 0,
+            newTranData: '',
+            newTran: {
+                to:'0x0',
+                value:0,
+                data:''
+            }
+        }
+    }
 
     async UNSAFE_componentWillMount() {
         await this.loadWeb3()
@@ -155,52 +181,37 @@ class App extends Component {
 
         if (info === "address") {
             this.setState({newTranTo: newTranVariable})
+
+            this.setState({
+                newTran: {
+                    ...this.state.newTran,
+                    to: newTranVariable
+                }
+            })
         } else if (info === 'value') {
-            this.setState({newTranValue: newTranVariable})
+            this.setState({
+                newTran: {
+                    ...this.state.newTran,
+                    value: newTranVariable
+                }
+            })
         } else {
-            this.setState({newTranData: newTranVariable})
+            this.setState({
+                newTran: {
+                    ...this.state.newTran,
+                    data: newTranVariable
+                }
+            })
         }
     }
 
     submitTran = () => {
-
-        
         //ONLY WORKS ON SECOND PRESS OF BUTTON
-        const newTran = {
-            to:this.state.newTranTo, 
-            value: this.state.newTranValue, 
-            data: this.state.newTranData
-        }
-
-        this.setState({newTran})
         console.log('TRANSATION SUBMITTED')
         console.log(this.state.newTran)
     }
 
     
-
-    //props sends property from one component to another
-    constructor(props) {
-        super(props)
-        this.state = {
-            account: '0x0',
-            contractAddress: '',
-            multiSig: {},
-            loading: true,
-            contractBalance: 0,
-            listOfTrans: [],
-            owners: [],
-            showAddOwner: false,
-            newOwner: '',
-            showDepositModal: false,
-            depositAmount: 0,
-            showSubmitModal: false,
-            newTranTo: '',
-            newTranValue: 0,
-            newTranData: '',
-            newTran: {to: '', value:0, data: ''}
-        }
-    }
 
     //add owner, deposit, submit, confirm, revoke, execute
 
