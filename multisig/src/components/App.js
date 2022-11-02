@@ -9,7 +9,7 @@ import SubmitModal from './Modals/SubmitModal';
 //import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
-import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
+import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend, GiConsoleController} from 'react-icons/all'
 
 class App extends Component {
 
@@ -103,32 +103,48 @@ class App extends Component {
           
             //RENDER TRANSACTIONS
 
-            if(await multiSig.transCount >= 0) {
-                let listOfTrans = []
-                
-                let countTrans = await multiSig.methods.transCount().call()
-                
-                for(let i = 0; i <= countTrans; i++) {
-                    let tempOwnTrans = await multiSig.methods.transactions(i).call()
-                    listOfTrans.push(tempOwnTrans)
-                }
+            let listOfTrans = []
 
-                this.setState({listOfTrans})
+            let tranCount = await this.state.multiSig.methods.transCount().call()
+            //console.log(tranCount)
+            let tempTranOwner = {}
 
-                if (this.state.newOwner !== '') {
-                    let ownerAddress = []
-                    ownerAddress.push(this.state.newOwner)
-                    await multiSig.methods.newOwner(ownerAddress).call()
-                    window.location.reload(false)
-                }
+                
+            for (let j = 0; j <= tranCount; j++) {
+                tempTranOwner = this.state.multiSig.methods.transactions(j).call() 
+                listOfTrans.push({tempTranOwner})
             }
+
+            this.setState({listOfTrans: listOfTrans})
+            //console.log(this.state.listOfTrans)
             
+
+            if (this.state.newOwner !== '') {
+                let ownerAddress = []
+                ownerAddress.push(this.state.newOwner)
+                await multiSig.methods.newOwner(ownerAddress).call()
+                window.location.reload(false)
+            }
+                            
         } else {
             //if no multiSigdata
             window.alert('Error!  contract not deployed.')
         }
 
     }
+
+    getTrans = async (tranCount) => {
+
+        let transactions = []
+        //run for loop and return a list of trans from smart contract
+        for (let i = 0; i <= tranCount; i++) {
+            let tempTranOwner = await this.state.multiSig.methods.transactions(i).call()
+            transactions.push({tempTranOwner})
+        }
+
+        return transactions
+    }
+
 
     //ADD OWNER MODAL
     openAddOwner = async () => {
