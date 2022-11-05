@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import './App.css';
 
 class ListOfTrans extends Component {
+
     render() {
         return (
             <>
@@ -18,6 +19,18 @@ class ListOfTrans extends Component {
                         <div className="col-md-2">Confirmations</div>
                         </div>
                     </div>
+                    {this.props.listOfTrans.length == this.props.transCount && this.props.listOfTrans.map((transaction, idx) => {
+                        return(
+                            <div className="row" key={transaction}>
+                                <div className="col-md-2">
+                                    {idx}
+                                </div>
+                                <div className="col-md-2">
+                                    {console.log(transaction)}
+                                </div>
+                            </div>
+                        )})    
+                    }
                 </div>
             </>
         )

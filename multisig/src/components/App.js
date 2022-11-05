@@ -9,12 +9,12 @@ import SubmitModal from './Modals/SubmitModal';
 //import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
-import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend, GiConsoleController} from 'react-icons/all'
+import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
 
 class App extends Component {
 
-    //useEffect(() => {});
     //props sends property from one component to another
+
     constructor(props) {
         super(props)
         this.state = {
@@ -24,6 +24,7 @@ class App extends Component {
             loading: true,
             contractBalance: 0,
             listOfTrans: [],
+            transCount: 0,
             owners: [],
             showAddOwner: false,
             newOwner: '',
@@ -103,20 +104,32 @@ class App extends Component {
           
             //RENDER TRANSACTIONS
 
-            let listOfTrans = []
 
             let tranCount = await this.state.multiSig.methods.transCount().call()
+            this.setState({transCount:tranCount})
             //console.log(tranCount)
-            let tempTranOwner = {}
+            
 
-                
-            for (let j = 0; j <= tranCount; j++) {
-                tempTranOwner = this.state.multiSig.methods.transactions(j).call() 
-                listOfTrans.push({tempTranOwner})
+
+            /*
+            
+                I need a way to call await within a for loop
+
+                i can try and while loop but might give same output
+
+                I can try call a function inside a for loop from 0 to tranCount and in that function the specific data is pulled for each transaction
+
+            */ 
+
+            for (let j = 0; j<tranCount+1; j++) {
+                this.getTransaction(j)
             }
 
-            this.setState({listOfTrans: listOfTrans})
-            //console.log(this.state.listOfTrans)
+
+
+            //console.log(tempTranOwner)
+            //////////////////////// Render transactions as a list instead of object. 2D ARRAY //////////////////
+            
             
 
             if (this.state.newOwner !== '') {
@@ -133,16 +146,41 @@ class App extends Component {
 
     }
 
-    getTrans = async (tranCount) => {
+    getTransaction = async (tran) => {
+        let tempTranArray = []
+        let tempTran= await this.state.multiSig.methods.transactions(tran).call()
+        tempTranArray.push([tempTran.data, tempTran.to, tempTran.value, tempTran.numOfConfirmations])
+        
+        //check if this.state.listOfTran empty?
+        //if empty just setState with this one
+        //if got items 
+        //save the current state in a temp array 
+        //then add the next transaction to the next space in the array 
+        
+        if (this.state.listOfTrans.length == 0 ) {
+            this.setState({listOfTrans: tempTranArray})
+        } else {
+            
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////HOW DO YOU MAKE A 2D ARRAY IN JAVASCRIPT///////////////////////////////////////
+            //how to make 2d array
+            //loop through the state of trans
+            //push each element into a temp
+            //push new temparray
+            //the setState
 
-        let transactions = []
-        //run for loop and return a list of trans from smart contract
-        for (let i = 0; i <= tranCount; i++) {
-            let tempTranOwner = await this.state.multiSig.methods.transactions(i).call()
-            transactions.push({tempTranOwner})
+            let bigTempArray= []
+
+            for (let k = 0; k<this.state.listOfTrans.length; k++) {
+                bigTempArray.push(this.state.listOfTrans[k])
+            }
+
+            bigTempArray.push(tempTranArray)
+
+            this.setState({listOfTrans: bigTempArray})
+
+            //console.log(this.state.listOfTrans)
+            
         }
-
-        return transactions
     }
 
 
@@ -346,8 +384,9 @@ class App extends Component {
                         </div>
 
                         <div>
-                            <ListOfTrans 
-                                transactions={this.state.listOfTrans}
+                            <ListOfTrans
+                                transCount={this.state.transCount}
+                                listOfTrans={this.state.listOfTrans}
                             />
                         </div>
 
