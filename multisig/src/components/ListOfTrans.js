@@ -6,17 +6,18 @@ class ListOfTrans extends Component {
     render() {
         return (
             <>
-                <div className="assetContainer">
-                    <div className="subContainer">
+                <div className="assetContainerTransaction">
+                    <div className="subContainerTransaction">
                         <span className="marketHeader">Transactions</span>
                     </div>
                     <div>
                         <div className="row columnHeaders">
-                        <div className="col-md-2">Index</div>
-                        <div className="col-md-2">Transaction</div>
-                        <div className="col-md-2">Reciever</div>
-                        <div className="col-md-2">Amount</div>
-                        <div className="col-md-2">Confirmations</div>
+                            <div className="col-md-2">Index</div>
+                            <div className="col-md-2">Transaction</div>
+                            <div className="col-md-2">Reciever</div>
+                            <div className="col-md-2"></div>
+                            <div className="col-md-2">Amount</div>
+                            <div className="col-md-2">Confirmations</div>
                         </div>
                     </div>
                     {this.props.listOfTrans.length == this.props.transCount && this.props.listOfTrans.map((transaction, idx) => {
@@ -26,7 +27,18 @@ class ListOfTrans extends Component {
                                     {idx}
                                 </div>
                                 <div className="col-md-2">
-                                    {console.log(transaction)}
+                                    {transaction[0][0]}
+                                </div>
+                                <div className="col-md-2">
+                                    {transaction[0][1]}
+                                </div>
+                                <div className="col-md-2">
+                                </div>
+                                <div className="col-md-2">
+                                    {transaction[0][2]}
+                                </div>
+                                <div className="col-md-2">
+                                    {transaction[0][3]}
                                 </div>
                             </div>
                         )})    

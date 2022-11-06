@@ -6,14 +6,11 @@ import NavBar from './NavBar';
 import AddOwnerModal from './Modals/AddOwnerModal';
 import DepositModal from './Modals/DepositModal';
 import SubmitModal from './Modals/SubmitModal';
-//import Balance from './Balance';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
 import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
 
 class App extends Component {
-
-    //props sends property from one component to another
 
     constructor(props) {
         super(props)
@@ -77,7 +74,6 @@ class App extends Component {
             const multiSig = new web3.eth.Contract(MultiSig.abi, multiSigData.address)
             this.setState({multiSig}) //set state to multiSig contract so we can use props
             
-            //multiSig.methods()...?
             const conBalance = Web3.utils.fromWei(await multiSig.methods.walletBalance().call(), "ether")
             
             //walletBalance coming back as undefined
@@ -95,42 +91,21 @@ class App extends Component {
             
             for(let i = 0; i <= count; i++) {
                 let tempOwn = await multiSig.methods.owners(i).call()
-                //console.log(tempOwn)
                 owners.push(tempOwn)
             }
 
-            //console.log(owners)
             this.setState({owners})
           
             //RENDER TRANSACTIONS
 
 
             let tranCount = await this.state.multiSig.methods.transCount().call()
-            this.setState({transCount:tranCount})
-            //console.log(tranCount)
-            
-
-
-            /*
-            
-                I need a way to call await within a for loop
-
-                i can try and while loop but might give same output
-
-                I can try call a function inside a for loop from 0 to tranCount and in that function the specific data is pulled for each transaction
-
-            */ 
+            this.setState({transCount:tranCount})            
 
             for (let j = 0; j<tranCount+1; j++) {
                 this.getTransaction(j)
             }
 
-
-
-            //console.log(tempTranOwner)
-            //////////////////////// Render transactions as a list instead of object. 2D ARRAY //////////////////
-            
-            
 
             if (this.state.newOwner !== '') {
                 let ownerAddress = []
@@ -151,23 +126,6 @@ class App extends Component {
         let tempTran= await this.state.multiSig.methods.transactions(tran).call()
         tempTranArray.push([tempTran.data, tempTran.to, tempTran.value, tempTran.numOfConfirmations])
         
-        //check if this.state.listOfTran empty?
-        //if empty just setState with this one
-        //if got items 
-        //save the current state in a temp array 
-        //then add the next transaction to the next space in the array 
-        
-        if (this.state.listOfTrans.length == 0 ) {
-            this.setState({listOfTrans: tempTranArray})
-        } else {
-            
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////HOW DO YOU MAKE A 2D ARRAY IN JAVASCRIPT///////////////////////////////////////
-            //how to make 2d array
-            //loop through the state of trans
-            //push each element into a temp
-            //push new temparray
-            //the setState
-
             let bigTempArray= []
 
             for (let k = 0; k<this.state.listOfTrans.length; k++) {
@@ -177,10 +135,6 @@ class App extends Component {
             bigTempArray.push(tempTranArray)
 
             this.setState({listOfTrans: bigTempArray})
-
-            //console.log(this.state.listOfTrans)
-            
-        }
     }
 
 
@@ -266,7 +220,7 @@ class App extends Component {
         await this.state.multiSig.methods.submit(this.state.newTran.to, this.state.newTran.value, this.state.newTran.data).send({from:this.state.account})
     }
 
-    
+
 
     //add owner, deposit, submit, confirm, revoke, execute
 

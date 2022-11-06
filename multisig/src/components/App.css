@@ -57,6 +57,9 @@
 .subContainer {
   margin-bottom: 20px;
 }
+.subContainerTransaction {
+  margin-bottom: 20px;
+}
 .marketOption {
   display: flex;
   margin-left: 22px;
@@ -99,6 +102,19 @@
 .assetContainer {
   background-color: #1168f1;
   width: 620px;
+  min-height: 225px;
+  margin: 0 auto;
+  top: 50%;
+  border-radius: 24px;
+  padding: 6px;
+  padding: 8px;
+  margin-top: 50px; /* space between sections */
+  color: #fff;
+  font-weight: 500;
+}
+.assetContainerTransaction {
+  background-color: #1168f1;
+  width: 1000px;
   min-height: 225px;
   margin: 0 auto;
   top: 50%;
