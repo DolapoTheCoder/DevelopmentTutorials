@@ -8,6 +8,7 @@ import DepositModal from './Modals/DepositModal';
 import SubmitModal from './Modals/SubmitModal';
 import ListOfTrans from './ListOfTrans';
 import ListOfOwners from './ListOfOwners';
+import TransationManager from './Modals/TransacionManager';
 import {AiOutlineUserAdd, AiOutlineFileAdd, BsPiggyBank, BsHandThumbsUp, BsHandThumbsDown, BiMailSend} from 'react-icons/all'
 
 class App extends Component {
@@ -35,7 +36,11 @@ class App extends Component {
                 to:'0x0',
                 value:0,
                 data:''
-            }
+            },
+            showTransacionManager: false,
+            isExecutable: false,
+            isConfirmable: false,
+            isRevokable: false
         }
     }
 
@@ -221,11 +226,28 @@ class App extends Component {
     }
 
     //handle the transaction
-    handleTrans = async (idx) => {
-        console.log(idx)
+    handleTrans = async (idx, confirmations) => {
+       //console.log(confirmations)
+
+       this.setState({showTransacionManager: true})
+
+        let isConfirmed = this.state.multiSig.methods.checkConfirmation(this.state.account, idx)
+        if (isConfirmed == true) {
+            this.setState({isRevokable: true})
+            
+            let minConfir = await this.state.multiSig.methods.minNumOfConfirmations().call() 
+            
+            if(confirmations >= minConfir) {
+               this.setState({isExecutable: true})
+            }
+        }
+        else {
+            //LOAD A BUTTON TO CONFIRM
+            this.setState({isConfirmable: true})
+        }
         //check if user address has confirmed the transaction already:
-        //if isConfirmed[idx][this.state.account] == true
-        // load a button that allows a user to revoke a transaction
+        //if isConfirmed[idx][this.state.account] == true DONE
+        // load a button that allows a user to revoke a transaction DONE
         // then if numOfConfirmations (this.state.listOfTrans[idx][3]) >= this.state.multiSig.methods.minNumOfConfirmations().call() then
         // a button that lets you execute transaction is displayed
         // through a this.setState.({isExecutable:true}) then
@@ -235,6 +257,13 @@ class App extends Component {
         // load a button that allows a user to confirm
         // through this.setState({isConfirmable:true}) 
         
+    }
+
+    whatTransaction = async () => {
+        //confirm?
+        //revoke?
+        //execute?
+        console.log()
     }
 
     //add owner, deposit, submit, confirm, revoke, execute
@@ -384,6 +413,16 @@ class App extends Component {
                         onClose={() =>  this.setState({showSubmitModal: false})}
                         sendSubmit={this.sendSubmit}
                         submitTran={this.submitTran}
+                    />
+                )}
+
+                {this.state.showTransacionManager && (
+                    <TransationManager
+                        onClose={() =>  this.setState({showTransacionManager: false})}
+                        whatTransaction = {this.whatTransaction}
+                        isConfirmable={this.state.isConfirmable}
+                        isExecutable={this.state.isExecutable}
+                        isRevokable={this.state.isRevokable}
                     />
                 )}
 

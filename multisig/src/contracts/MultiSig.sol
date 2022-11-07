@@ -204,4 +204,16 @@ contract MultiSig {
 
         return balanceOf;
     }
+
+    function checkConfirmation(uint256 _txIndex, address _user)
+        public
+        view
+        returns (bool)
+    {
+        if (isConfirmed[_txIndex][_user] == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

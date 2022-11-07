@@ -22,7 +22,7 @@ class ListOfTrans extends Component {
                     </div>
                     {this.props.listOfTrans.length == this.props.transCount && this.props.listOfTrans.map((transaction, idx) => {
                         return(
-                            <div className="row" key={transaction} onClick={() => this.props.handleTrans(idx)}>
+                            <div className="row" key={transaction} onClick={() => this.props.handleTrans(idx, transaction[0][3])}>
                                 <div className="col-md-2">
                                     {idx}
                                 </div>
