@@ -16,13 +16,13 @@ class ListOfTrans extends Component {
                             <div className="col-md-2">Transaction</div>
                             <div className="col-md-2">Reciever</div>
                             <div className="col-md-2"></div>
+                            <div className="col-md-2"></div>
                             <div className="col-md-2">Amount</div>
-                            <div className="col-md-2">Confirmations</div>
                         </div>
                     </div>
                     {this.props.listOfTrans.length == this.props.transCount && this.props.listOfTrans.map((transaction, idx) => {
                         return(
-                            <div className="row" key={transaction}>
+                            <div className="row" key={transaction} onClick={() => this.props.handleTrans(idx)}>
                                 <div className="col-md-2">
                                     {idx}
                                 </div>
@@ -35,10 +35,9 @@ class ListOfTrans extends Component {
                                 <div className="col-md-2">
                                 </div>
                                 <div className="col-md-2">
-                                    {transaction[0][2]}
                                 </div>
                                 <div className="col-md-2">
-                                    {transaction[0][3]}
+                                    {transaction[0][2]}
                                 </div>
                             </div>
                         )})    

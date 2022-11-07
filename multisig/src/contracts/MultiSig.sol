@@ -60,6 +60,7 @@ contract MultiSig {
         executedCount = 0;
         ownersCount = 0;
         walletBalance = 0;
+        minNumOfConfirmations = _minNumOfConfirmations;
 
         isOwner[msg.sender] = true;
         owners.push(msg.sender);

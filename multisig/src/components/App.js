@@ -220,7 +220,22 @@ class App extends Component {
         await this.state.multiSig.methods.submit(this.state.newTran.to, this.state.newTran.value, this.state.newTran.data).send({from:this.state.account})
     }
 
+    //handle the transaction
+    handleTrans = async (idx) => {
+        console.log(idx)
+        //check if user address has confirmed the transaction already:
+        //if isConfirmed[idx][this.state.account] == true
+        // load a button that allows a user to revoke a transaction
+        // then if numOfConfirmations (this.state.listOfTrans[idx][3]) >= this.state.multiSig.methods.minNumOfConfirmations().call() then
+        // a button that lets you execute transaction is displayed
+        // through a this.setState.({isExecutable:true}) then
+        // send this to the modal for transactions
 
+        //if isConfirmed[idx][this.state.account] == false then
+        // load a button that allows a user to confirm
+        // through this.setState({isConfirmable:true}) 
+        
+    }
 
     //add owner, deposit, submit, confirm, revoke, execute
 
@@ -341,6 +356,7 @@ class App extends Component {
                             <ListOfTrans
                                 transCount={this.state.transCount}
                                 listOfTrans={this.state.listOfTrans}
+                                handleTrans={this.handleTrans}
                             />
                         </div>
 
