@@ -259,11 +259,12 @@ class App extends Component {
         
     }
 
-    whatTransaction = async () => {
+    whatTransaction = async (key) => {
         //confirm?
         //revoke?
         //execute?
-        console.log()
+        this.setState({showTransacionManager: false})
+        console.log(key)
     }
 
     //add owner, deposit, submit, confirm, revoke, execute
